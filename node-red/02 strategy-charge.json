@@ -614,7 +614,7 @@
         "z": "517b5f5313a242c5",
         "g": "38d625c4fd161b7b",
         "name": "Regulated power",
-        "func": "// Which sub-strategy to use\nmsg.target = \"Self-consumption\";\n\n// Set target grid consumption for the PID controller\nmsg.house_target_grid_consumption_in_w = msg.house_battery_strategy_timed_target_power;\n\nreturn msg;",
+        "func": "// Which sub-strategy to use\nmsg.target = \"Self-consumption\";\n\n// Set target grid consumption for the PID controller\nmsg.house_target_grid_consumption_in_w = msg.house_battery_strategy_timed_target_power;\n\n// Don't allow discharging in the charge mode\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", true, true);\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,

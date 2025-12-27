@@ -308,6 +308,7 @@ input_number:
     name: Desired battery energy reserve
     min: 0
     max: 30
+    step: 0.1
     unit_of_measurement: "kWh"
     mode: box
     icon: mdi:battery-charging
@@ -412,9 +413,10 @@ input_select:
     options:
       - Full stop # Stop (dis)charging and disengage grid relay
       - Self-consumption # Use your own solar production. Don't buy or sell. Target grid consumption = 0, e.g. "Nul op de meter (NoM)" in Dutch.
-      - Timed # Configure which strategy should be active during given periods of the day.
-      - Dynamic # Requires a dynamic tariff contract and the Cheapest Hours HACS add-on
+      - Charge # Charge at maximum capacity or at set max grid consumption.
       - Charge PV # Charge when surplus PV is available, batteries will not discharge
+      - Peak Shaving # Discharge only when grid consumption is above a certain threshold.
+      - Timed # Configure which strategy should be active during given periods of the day.
     icon: mdi:home-battery
 
   # Available sub-strategies for timed / smart
@@ -423,9 +425,9 @@ input_select:
     options: &SubStrategies
       - Full stop # Deactivate batteries
       - Self-consumption # Target grid consumption = 0
-      - Charge # Uses self-consumption strategy with smart settings and target grid consumption > 0
+      - Charge # Charge at maximum capacity or at set max grid consumption.
       - Charge PV # Charge when surplus PV is available, batteries will not discharge
-
+      - Peak Shaving # Discharge only when grid consumption is above a certain threshold.
   # How often is battery priority cycled automatically?
   house_battery_control_priority_change_interval:
     name: "Auto Cycle"

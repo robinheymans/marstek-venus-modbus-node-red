@@ -203,7 +203,7 @@ views:
             tap_action:
               action: url
               url_path: >-
-                https://github.com/gitcodebob/marstek-venus-rs485-node-red/blob/main/docs/06-advanced-features.md#battery-life
+                https://github.com/gitcodebob/marstek-venus-rs485-node-red/blob/main/README.md#advanced-features
           - show_name: true
             show_icon: true
             show_state: true
@@ -568,11 +568,26 @@ views:
                   entity: input_number.house_battery_strategy_timed_target_power
                   name: Target grid consumption
                   icon: mdi:home-import-outline
+              - type: conditional
+                conditions:
+                  - entity: input_boolean.house_battery_strategy_timed_has_max_power
+                    state: 'off'
+                row:
+                  entity: >-
+                    input_boolean.house_battery_strategy_charge_allow_discharging
           - type: markdown
             content: >-
               <font color=grey>*) _Usable energy reserve, excl. 12% cut-off
               SoC_</font>
             text_only: true
+          - type: markdown
+            content: '#### Peak shaving'
+            text_only: true
+          - type: entities
+            entities:
+              - entity: input_number.house_battery_strategy_maximum_peak
+                name: Maximum allowed peak
+                icon: ''
           - type: markdown
             content: '#### Self-consumption'
             text_only: true
@@ -614,107 +629,39 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Dynamic strategy
+            heading: EV Stop Trigger
             heading_style: title
+            icon: mdi:power-plug-off
           - type: markdown
             content: >-
-              <font color=orange><ha-icon icon="mdi:alert"></ha-icon> Cheapest
-              Hours integration not installed</font>
+              <font color=grey>The Stop Trigger will OVERRULE ALL active
+              strategies.
 
-
-              This strategy uses [the Cheapest Hours integration from
-              TheFes](https://github.com/TheFes/cheapest-energy-hours/tree/main?tab=readme-ov-file#how-to-install).
-
-              Please install via HACS or follow his instructions.
+              _E.g. use to disengage your home batteries when EV is
+              charging_</font>
             text_only: true
-            visibility:
-              - condition: or
-                conditions:
-                  - condition: state
-                    entity: update.cheapest_energy_hours_update
-                    state: unavailable
-                  - condition: state
-                    entity: update.cheapest_energy_hours_update
-                    state: unknown
           - type: entities
             entities:
-              - entity: input_select.house_battery_strategy_dynamic_data_source
-          - type: entities
-            entities:
-              - entity: input_number.house_battery_strategy_dynamic_threshold_delta
-                name: Minimum price delta
-          - type: tile
-            entity: input_number.house_battery_strategy_dynamic_cheapest_hrs
-            hide_state: true
-            vertical: false
-            features:
-              - type: numeric-input
-                style: buttons
-            features_position: bottom
-          - type: tile
-            entity: input_number.house_battery_strategy_dynamic_expensive_hrs
-            hide_state: true
-            vertical: false
-            features:
-              - type: numeric-input
-                style: buttons
-            features_position: bottom
-          - type: entities
-            entities:
-              - entity: input_datetime.house_battery_strategy_dynamic_cheapest_start
-                type: simple-entity
-              - entity: input_datetime.house_battery_strategy_dynamic_cheapest_end
-                type: simple-entity
-              - entity: input_datetime.house_battery_strategy_dynamic_expensive_start
-                type: simple-entity
-              - entity: input_datetime.house_battery_strategy_dynamic_expensive_end
-                type: simple-entity
-            visibility:
-              - condition: state
-                entity: input_select.house_battery_strategy_dynamic_data_source
-                state_not: None
-          - show_name: true
-            show_icon: true
-            show_state: true
-            type: glance
-            entities:
-              - entity: >-
-                  input_number.house_battery_strategy_dynamic_expensive_avg_tariff
-                type: simple-entity
-                name: Expensive period
-              - entity: >-
-                  input_number.house_battery_strategy_dynamic_cheapest_avg_tariff
-                type: simple-entity
-                name: Charged at
-              - entity: >-
-                  input_number.house_battery_strategy_dynamic_expensive_avg_delta
-                type: simple-entity
-                name: Price delta
-            visibility:
-              - condition: state
-                entity: input_select.house_battery_strategy_dynamic_data_source
-                state_not: None
+              - entity: input_text.house_battery_strategy_ev_sensor_entity_id
+                secondary_info: none
           - type: markdown
             content: >-
-              #### Information
-
-              | Period      | Strategy |
-
-              | ----------- | ----------- |
-
-              | Default     | Charge PV   |
-
-              | Cheapest    | Charge      |
-
-              | Expensive   | Self-consumption |
-
-
-              1. _Use the settings on this dashboard to tune the strategies_
-
-              1. _Timed and Dynamic share the same settings_
-
-              1. _Note: currently it is not possible to change the strategy per
-              period via this dashboard_
+              <font color=grey>Enter the `entity_id` of an `input_boolean` or
+              `on/off template_sensor` in the field above</font>
+            text_only: true
+          - type: tile
+            grid_options:
+              columns: full
+            entity: sensor.ev_is_charging
+            name: EV stop trigger
+            vertical: false
+            features_position: bottom
+          - type: markdown
+            content: >-
+              <font color=grey>The `EV stop trigger` should now indicate wether
+              an all stop has been triggered. Stop trigger 'on' = batteries
+              'Full stop'.</font>
+            text_only: true
     cards: []
   - type: sections
     max_columns: 3
@@ -802,40 +749,4 @@ views:
               columns: full
             hours_to_show: 0.1
         column_span: 2
-      - type: grid
-        cards:
-          - type: heading
-            heading: EV Stop Trigger
-            heading_style: title
-            icon: mdi:power-plug-off
-          - type: markdown
-            content: >-
-              <font color=grey>The Stop Trigger will OVERRULE ALL active
-              strategies.
-
-              _E.g. use to disengage your home batteries when EV is
-              charging_</font>
-            text_only: true
-          - type: entities
-            entities:
-              - entity: input_text.house_battery_strategy_ev_sensor_entity_id
-                secondary_info: none
-          - type: markdown
-            content: >-
-              <font color=grey>Enter the `entity_id` of an `input_boolean` or
-              `on/off template_sensor` in the field above</font>
-            text_only: true
-          - type: tile
-            grid_options:
-              columns: full
-            entity: sensor.ev_is_charging
-            name: EV stop trigger
-            vertical: false
-            features_position: bottom
-          - type: markdown
-            content: >-
-              <font color=grey>The `EV stop trigger` should now indicate wether
-              an all stop has been triggered. Stop trigger 'on' = batteries
-              'Full stop'.</font>
-            text_only: true
     cards: []

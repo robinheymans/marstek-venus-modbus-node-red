@@ -4,23 +4,27 @@
 
 template:
   - sensor:
-      # Example: sensor for single-phase power meter
-      - name: "L1 Meter Power"
-        unique_id: "l1_meter_power"
-        unit_of_measurement: "W"
-        device_class: "power"
-        state_class: "measurement"
-        state: >
-          {% set consumption = states('sensor.electricity_meter_power_consumption_phase_l1') | float(0) %}
-          {% set production = states('sensor.electricity_meter_power_production_phase_l1') | float(0) %}
-          {{ (consumption - production) | round(2) }}
-
       # House battery control | Grid power
       # Your P1 meter indicates the power drawn or returned to grid.
       # This "P1 meter power" sensor acts as an alias for you power sensing configuration and is used throughout the node-RED scripts.
       - name: "Grid Power"
-        unique_id: "p1_meter_power"
-        state: "{{ states('sensor.l1_meter_power') }}" # << SET YOUR GRID POWER SENSOR HERE
+        default_entity_id: sensor.p1_meter_power
+        state: "{{ states('sensor.dsmr_power_current') }}"
         unit_of_measurement: "W"
         device_class: "power"
         state_class: "measurement"
+
+input_number:
+  house_battery_strategy_maximum_peak:
+    name: "Peak Shaving Maximum Allowed Peak"
+    min: 2000
+    max: 10000
+    step: 100
+    unit_of_measurement: "W"
+    mode: box
+    icon: mdi:summit
+
+input_boolean:
+  house_battery_strategy_charge_allow_discharging:
+    name: Allow discharging
+    icon: mdi:battery-arrow-down
