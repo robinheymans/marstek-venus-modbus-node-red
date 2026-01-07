@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=http://schemas.home-assistant.io/configuration
 # This file contains the core entities of the House Battery Control.
 # It should be included in the main configuration.yaml file as a `package` via `!include_dir_named` https://www.home-assistant.io/docs/configuration/packages/.
 # Replace this file when updating `House Battery Control`.
@@ -25,6 +26,10 @@ input_boolean:
   house_battery_strategy_timed_has_max_power:
     name: Charge at max. power
     icon: mdi:power-plug-battery-outline
+
+  # Debug
+  house_battery_control_is_debug_mode:
+    name: Debug mode
 
 ###########################################################################################################
 # DATETIME
@@ -413,11 +418,12 @@ input_select:
     options:
       - Full stop # Stop (dis)charging and disengage grid relay
       - Self-consumption # Use your own solar production. Don't buy or sell. Target grid consumption = 0, e.g. "Nul op de meter (NoM)" in Dutch.
-      - NoM with Peak Shaving
-      - Charge # Charge at maximum capacity or at set max grid consumption.
+      - Timed # Configure which strategy should be active during given periods of the day.
+      - Dynamic # Requires a dynamic tariff contract and the Cheapest Hours HACS add-on
+      - Charge # Uses self-consumption strategy with smart settings and target grid consumption > 0
       - Charge PV # Charge when surplus PV is available, batteries will not discharge
       - Peak Shaving # Discharge only when grid consumption is above a certain threshold.
-      - Timed # Configure which strategy should be active during given periods of the day.
+      - NoM with Peak Shaving
     icon: mdi:home-battery
 
   # Available sub-strategies for timed / smart
@@ -426,10 +432,11 @@ input_select:
     options: &SubStrategies
       - Full stop # Deactivate batteries
       - Self-consumption # Target grid consumption = 0
-      - NoM with Peak Shaving
       - Charge # Charge at maximum capacity or at set max grid consumption.
       - Charge PV # Charge when surplus PV is available, batteries will not discharge
       - Peak Shaving # Discharge only when grid consumption is above a certain threshold.
+      - NoM with Peak Shaving
+
   # How often is battery priority cycled automatically?
   house_battery_control_priority_change_interval:
     name: "Auto Cycle"
@@ -576,6 +583,30 @@ template:
         delay_off:
           seconds: 5
 
+  - trigger:
+      - platform: event
+        event_type: "update_trace_sensor"
+    sensor:
+      - name: "Home battery control Trace"
+        unique_id: home_battery_control_trace_sensor
+        state: >
+          {{ now() | default('Idle') }}
+        attributes:
+          start: "{{ trigger.event.data.start | default('Unknown') }}"
+          end: "{{ trigger.event.data.end | default('Unknown') }}"
+          history: >
+            {{ trigger.event.data.trace | default([]) }}
+          last_updated: "{{ now() }}"
+
+      - name: "Home battery control Log"
+        unique_id: home_battery_control_log_sensor
+        # State is the last message in the log
+        state: >
+          {% set logs = trigger.event.data.log | default([]) %}
+          {{ logs[-1] if logs | length > 0 else 'No logs' }}
+        attributes:
+          log: "{{ trigger.event.data.log | default([]) }}"
+
 ###########################################################################################################
 # RECORDER - LOGBOOK FILTERING
 ###########################################################################################################
@@ -583,6 +614,10 @@ template:
 # History graphs and statistics remain unaffected.
 recorder:
   exclude:
+    entities:
+      # Debug sensors (updated frequently when debug mode is active)
+      - sensor.home_battery_control_trace
+      - sensor.home_battery_control_log
     entity_globs:
       # PID control signals (updated every 2-40 seconds during operation)
       - input_number.house_battery_control_*_term

@@ -17,10 +17,10 @@ Switch strategies anytime via the Home Assistant dashboard.
 
 ## Strategy Details
 
-### Self-Consumption (required)
+### Self-Consumption (mandatory)
 Uses a PID controller to maintain ~0W grid power by continuously adjusting battery charge/discharge. When solar production exceeds consumption, the battery charges. When consumption exceeds production, the battery discharges to cover the difference.
 
-**Note:** this is a core strategy employed by many other strategies and thus mandatory to configure.
+**Note:** This core strategy is used internally by other strategies but can also be selected directly. It is thus mandatory to configure. 
 
 **⚙️ Setup required:** PID tuning for optimal performance. See [Self-consumption Setup Guide](04-setup-self-consumption.md).
 
@@ -29,7 +29,7 @@ Uses a PID controller to maintain ~0W grid power by continuously adjusting batte
 ---
 
 ### Dynamic (Price-based)
-Automatically charges during the cheapest hours, uses self-consumption during the most expensive hours (if price delta justifies battery wear), and uses Charge PV during other periods.
+Automatically charges during the cheapest hours, uses self-consumption during the most expensive hours (if price delta justifies battery use), and uses Charge PV during other periods.
 
 **Ideal for:** Dynamic/hourly energy contracts to maximize financial savings.
 
@@ -60,6 +60,8 @@ Charge or discharge based on a fixed schedule. Configure time windows through th
 Forces charging from grid until batteries reach the capacity indicated by the user.
 
 **Ideal for:** Preparing for power outages or charging before expensive rate periods.
+
+**🔧 Settings:** [video explainer charge settings](https://www.youtube.com/watch?v=UbeJaRjFK_o&t=193s) (on YouTube)
 
 **Flow:** `02 strategy-charge.json`
 
