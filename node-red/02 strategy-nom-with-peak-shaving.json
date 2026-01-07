@@ -178,7 +178,9 @@
         "x": 570,
         "y": 180,
         "wires": [
-            []
+            [
+                "33d114777db61f9b"
+            ]
         ]
     },
     {
@@ -542,7 +544,7 @@
         "enableGlobalContextStore": true
     },
     {
-        "id": "9c47a349f7e4493d",
+        "id": "61aaa1a3ffeac137",
         "type": "global-config",
         "env": [],
         "modules": {

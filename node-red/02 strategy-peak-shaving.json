@@ -151,10 +151,8 @@
         "z": "14a7fc83213e9b42",
         "g": "11674ae2cd15c76b",
         "name": "Call self-consumption",
-        "links": [
-            "57dc0f9224530077"
-        ],
-        "linkType": "static",
+        "links": [],
+        "linkType": "dynamic",
         "timeout": "30",
         "x": 560,
         "y": 200,
@@ -170,7 +168,7 @@
         "z": "14a7fc83213e9b42",
         "g": "11674ae2cd15c76b",
         "name": "Setup",
-        "func": "let ev_charging = (flow.get('ev_charging') || 'off') === 'on';\nlet max_peak = flow.get('max_peak') || 2.5;\nlet safety_margin = flow.get('safety_margin') || 100;\n\nmsg.house_target_grid_consumption_in_w = (max_peak * 1000) - safety_margin;\n\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", ev_charging, true);\nRED.util.setMessageProperty(msg, \"advanced_settings.charge_disabled\", true, true);\n\nnode.status({\n    fill: 'blue',\n    shape: \"dot\",\n    text: `Target: ${msg.house_target_grid_consumption_in_w}W (charge: false, discharge: ${!ev_charging}) at ${new Date().toLocaleString(\"nl-BE\")}`\n});\n\nreturn msg;",
+        "func": "let ev_charging = (flow.get('ev_charging') || 'off') === 'on';\nlet max_peak = flow.get('max_peak') || 2.5;\nlet safety_margin = flow.get('safety_margin') || 100;\n\nmsg.house_target_grid_consumption_in_w = (max_peak * 1000) - safety_margin;\nmsg.target = \"Self-consumption\";\n\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", ev_charging, true);\nRED.util.setMessageProperty(msg, \"advanced_settings.charge_disabled\", true, true);\n\nnode.status({\n    fill: 'blue',\n    shape: \"dot\",\n    text: `Target: ${msg.house_target_grid_consumption_in_w}W (charge: false, discharge: ${!ev_charging}) at ${new Date().toLocaleString(\"nl-BE\")}`\n});\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -429,7 +427,7 @@
         "enableGlobalContextStore": true
     },
     {
-        "id": "2bcaade5a3cb707d",
+        "id": "c8f6575a1e88e6e7",
         "type": "global-config",
         "env": [],
         "modules": {

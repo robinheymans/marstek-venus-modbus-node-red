@@ -602,7 +602,7 @@
         "z": "517b5f5313a242c5",
         "g": "38d625c4fd161b7b",
         "name": "Regulated power",
-        "func": "// Logger, usage: log(this, \"\");\nconst log = global.get('logger');\n\n// Which sub-strategy to use\nmsg.target = \"Self-consumption\";\n\n// Set target grid consumption for the PID controller\nmsg.house_target_grid_consumption_in_w = msg.house_battery_strategy_timed_target_power;\n\n// Don't allow discharging in the charge mode\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", true, true);\n\n// Finally\nlog(this, `**Regulated** charging. Target energy ${Number(msg.batteries_available_energy).toFixed(1)}/${Number(msg.house_battery_strategy_timed_target_energy).toFixed(1)} kWh @ target grid consumption ${Math.floor(msg.house_target_grid_consumption_in_w)} W`);\nreturn msg;",
+        "func": "// Logger, usage: log(this, \"\");\nconst log = global.get('logger');\n\n// Which sub-strategy to use\nmsg.target = \"Self-consumption\";\n\n// Set target grid consumption for the PID controller\nmsg.house_target_grid_consumption_in_w = msg.house_battery_strategy_timed_target_power;\n\n// Finally\nlog(this, `**Regulated** charging. Target energy ${Number(msg.batteries_available_energy).toFixed(1)}/${Number(msg.house_battery_strategy_timed_target_energy).toFixed(1)} kWh @ target grid consumption ${Math.floor(msg.house_target_grid_consumption_in_w)} W`);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,

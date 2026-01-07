@@ -604,6 +604,496 @@ views:
       badges_position: top
       badges_wrap: scroll
   - type: sections
+    max_columns: 4
+    path: nom-with-peak-protection
+    icon: mdi:summit
+    sections:
+      - type: grid
+        cards:
+          - type: custom:stack-in-card
+            mode: vertical
+            keep:
+              margin: false
+              box_shadow: false
+              background: false
+            card_mod:
+              style: |
+                ha-card {
+                  padding: 10px 5px 10px 15px !important;
+                }
+            cards:
+              - type: heading
+                heading: Maximum allowed peak
+                heading_style: subtitle
+                icon: mdi:summit
+                card_mod:
+                  style: |
+                    ha-card {
+                      padding: 10px 5px 10px 05px !important;
+                    }
+              - type: tile
+                entity: input_number.house_battery_max_peak_january
+                name: January
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_february
+                name: February
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_march
+                name: March
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_april
+                name: April
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_may
+                name: May
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_june
+                name: June
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_july
+                name: July
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_august
+                name: August
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_september
+                name: September
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_october
+                name: October
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_november
+                name: November
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    ha-tile-info { font-weight: 400 !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_max_peak_december
+                name: December
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+      - type: grid
+        cards:
+          - type: custom:stack-in-card
+            mode: vertical
+            keep:
+              margin: false
+              box_shadow: false
+              background: false
+            card_mod:
+              style: |
+                ha-card {
+                  padding: 10px 5px 10px 15px !important;
+                }
+            cards:
+              - type: heading
+                heading: Battery reserve
+                heading_style: subtitle
+                icon: mdi:battery-charging-low
+                card_mod:
+                  style: |
+                    ha-card {
+                      padding: 10px 5px 10px 05px !important;
+                    }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_january
+                name: January
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_february
+                name: February
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_march
+                name: March
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_april
+                name: April
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_may
+                name: May
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_june
+                name: June
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_july
+                name: July
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_august
+                name: August
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_september
+                name: September
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_october
+                name: October
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_november
+                name: November
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+              - type: tile
+                entity: input_number.house_battery_min_reserve_december
+                name: December
+                hide_state: true
+                vertical: false
+                features:
+                  - type: numeric-input
+                    style: buttons
+                features_position: inline
+                card_mod:
+                  style: >
+                    .icon-container { display: none !important; margin: 0
+                    !important; }
+
+                    ha-tile-icon { display: none !important; }
+
+                    .info { margin-left: 0px !important; }
+    header:
+      card:
+        type: markdown
+        content: >-
+          ### Nom with peak Shaving strategy
+
+          _Setup usable energy reserve for peak shaving, excl. 12% cut-off SoC,
+          and maximum allowed peak for each month_
+        text_only: true
+  - type: sections
     max_columns: 3
     title: Timed/Dynamic
     icon: mdi:timer-cog-outline
