@@ -1,0 +1,552 @@
+[
+    {
+        "id": "d99b81f8270826b1",
+        "type": "tab",
+        "label": "Strategy NoM with Peak Shaving",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a90fc379420bbeff",
+        "type": "group",
+        "z": "d99b81f8270826b1",
+        "name": "Configuration",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "430dc96fae0a872f",
+            "bd6709664189abdc"
+        ],
+        "x": 34,
+        "y": 79,
+        "w": 192,
+        "h": 142
+    },
+    {
+        "id": "a7d3b1401f7dedb4",
+        "type": "group",
+        "z": "d99b81f8270826b1",
+        "name": "Battery solutions",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "dfb18f1c8a5b43e7",
+            "6e519e50bff028d6"
+        ],
+        "x": 874,
+        "y": 99,
+        "w": 192,
+        "h": 122
+    },
+    {
+        "id": "b6502b923a53af09",
+        "type": "group",
+        "z": "d99b81f8270826b1",
+        "name": "Logic",
+        "style": {
+            "fill": "#d1d1d1",
+            "fill-opacity": "0.37",
+            "label": true
+        },
+        "nodes": [
+            "610c45ba2007bbb7",
+            "logic_function_hysteresis",
+            "33d114777db61f9b"
+        ],
+        "x": 274,
+        "y": 139,
+        "w": 552,
+        "h": 82
+    },
+    {
+        "id": "6848d404c55a5df8",
+        "type": "group",
+        "z": "d99b81f8270826b1",
+        "name": "Listen for configuration changes",
+        "style": {
+            "fill": "#d1d1d1",
+            "label": true,
+            "fill-opacity": "0.52"
+        },
+        "nodes": [
+            "0cb4023681715981",
+            "1e93fb3e5f1b71eb",
+            "3d858dc76a124d92",
+            "42cd90aec97566ee",
+            "66e46c7b42b1db8d",
+            "5944a88138fec1c7",
+            "ba9743a4458e41c7",
+            "4dab3d2137302713"
+        ],
+        "x": 54,
+        "y": 259,
+        "w": 572,
+        "h": 262
+    },
+    {
+        "id": "fb5f128e23bb0c91",
+        "type": "comment",
+        "z": "d99b81f8270826b1",
+        "name": "Home Battery Strategy",
+        "info": "The `Home Battery Start` flow will call this strategy flow\nby matching the strategy name with the Link In name.\n\nConfigure the Link In node in the Start group.\n\nDon't modify other parts of the Start and End groups.\nThey handle the calling and returning for you.",
+        "x": 140,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "430dc96fae0a872f",
+        "type": "link in",
+        "z": "d99b81f8270826b1",
+        "g": "a90fc379420bbeff",
+        "name": "NoM with Peak Shaving",
+        "links": [],
+        "x": 185,
+        "y": 180,
+        "wires": [
+            [
+                "610c45ba2007bbb7"
+            ]
+        ]
+    },
+    {
+        "id": "bd6709664189abdc",
+        "type": "comment",
+        "z": "d99b81f8270826b1",
+        "g": "a90fc379420bbeff",
+        "name": "Start (readme)",
+        "info": "# Setting up your battery strategy flow\n\n## Setup\nName the `Link In node` in this start group exactly after the <select> option configured in your\nselect_input.house_battery_strategy\n\nconfigure select options in:\ninput_select_house_battery_control.yaml\n\n### example\n`house_battery_strategy:\n  name: House Battery Strategy\n  options:\n    - AcmE example`\n\nThe above creates a select option, allowing user to select 'AcmE example'\n\nWhen selected, battery control will search for a flow containing a Link In node\ncalled 'AcmE example' (case sensitive).",
+        "x": 130,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "dfb18f1c8a5b43e7",
+        "type": "link out",
+        "z": "d99b81f8270826b1",
+        "g": "a7d3b1401f7dedb4",
+        "name": "Return",
+        "mode": "return",
+        "links": [],
+        "x": 915,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "6e519e50bff028d6",
+        "type": "comment",
+        "z": "d99b81f8270826b1",
+        "g": "a7d3b1401f7dedb4",
+        "name": "End (readme)",
+        "info": "Should return a solution_array of battery objects\n\n## battery object format\n`{{id: string|number, mode: string, power: number}} battery solution`\n- id is an arbitrary battery ID\n- mode is \"stop\", \"charge\", \"discharge\" for Marstek\n- power in Watts\n\n### example array\nreturn this type of solution_array via msg.solutions\n` \nlet solution_array = [];\nsolution_array.push({id:\"M1\", mode: \"charge\", power: 100}); // per battery\nreturn {solutions: solution_array};\n` ",
+        "x": 970,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "8b5b1cb76a5df24a",
+        "type": "debug",
+        "z": "d99b81f8270826b1",
+        "name": "Reserve %",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "reserve_percentage",
+        "targetType": "msg",
+        "statusVal": "reserve_percentage",
+        "statusType": "auto",
+        "x": 590,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "logic_function_hysteresis",
+        "type": "function",
+        "z": "d99b81f8270826b1",
+        "g": "b6502b923a53af09",
+        "name": "Determine strategy",
+        "func": "let current_grid = msg.grid_power || 0;\nlet battery_power = msg.batteries_total_power || 0; // Positief = laden, Negatief = ontladen\nlet max_peak = flow.get('max_peak') || 2.5;\nlet safety_margin = flow.get('safety_margin') || 100;\nlet ev_charging = (flow.get('ev_charging') || 'off') === 'on';\n\nlet peak_limit_watts = (max_peak * 1000) - safety_margin;\nlet reserve_pct = msg.reserve_percentage;\n\nlet is_recharging = flow.get(\"strategy_force_recharge_active\") || false;\n\nlet virtual_grid_power = current_grid - battery_power;\n\nif (reserve_pct < 50) {\n    is_recharging = true; \n} else if (reserve_pct >= 99) {\n    is_recharging = false;\n}\n\nflow.set(\"strategy_force_recharge_active\", is_recharging);\n\nlet target_consumption = 0;\nlet charge_disabled = false;\nlet discharge_disabled = ev_charging; // Standaard is ontladen niet toegestaan wanneer de EV insteekt\nlet status_text = \"\";\nlet status_color = \"green\";\n\nif (is_recharging) {\n    // SCENARIO A: NOODLADEN (Reserve < 50%)\n    // Batterij opladen met maximum piek limiet\n    target_consumption = peak_limit_watts;\n    charge_disabled = false;\n    status_text = \"Recharge reserve\";\n    status_color = \"red\";\n\n} else if (reserve_pct > 99) {\n    // SCENARIO B: BATTERIJ VOL\n    // Maximaal zelfverbruik, nul op de meter\n    target_consumption = 0;\n    charge_disabled = false;\n    status_text = \"Self-consumption\";\n    status_color = \"blue\";\n\n} else {\n    // SCENARIO C: PEAK PROTECTION BUFFER (50% - 99%)\n    // Peak protection, maar buffer mag opgeladen worden bij zonne-overschot\n    if (virtual_grid_power < 250) {\n        // Laag verbruik, mogelijk zonne-overschot dus laden toestaan en ontladen niet\n        target_consumption = 0;\n        charge_disabled = false;\n        discharge_disabled = true;\n        status_text = \"Solar charge\";\n        status_color = \"green\";\n    } else {\n        // Hoger verbruik, peak shaving activeren\n        target_consumption = peak_limit_watts;\n        charge_disabled = true;\n        status_text = \"Peak shaving\";\n        status_color = \"yellow\";\n    }\n}\n\nmsg.house_target_grid_consumption_in_w = target_consumption;\nmsg.target = \"Self-consumption\";\n\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", discharge_disabled, true);\nRED.util.setMessageProperty(msg, \"advanced_settings.charge_disabled\", charge_disabled, true);\n\n// Status update\nnode.status({\n    fill: status_color,\n    shape: \"dot\",\n    text: `${status_text} | Grid: ${Math.round(virtual_grid_power)}W | Target: ${Math.round(target_consumption)}W (charge: ${!charge_disabled}, discharge: ${!discharge_disabled}) at ${new Date().toLocaleString(\"nl-BE\")}`\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "33d114777db61f9b",
+        "type": "link call",
+        "z": "d99b81f8270826b1",
+        "g": "b6502b923a53af09",
+        "name": "Call flow",
+        "links": [],
+        "linkType": "dynamic",
+        "timeout": "30",
+        "x": 740,
+        "y": 180,
+        "wires": [
+            [
+                "dfb18f1c8a5b43e7"
+            ]
+        ]
+    },
+    {
+        "id": "0cb4023681715981",
+        "type": "server-state-changed",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "Maximum allowed peak this month changed",
+        "server": "73772e33.09523",
+        "version": 6,
+        "outputs": 1,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+                "sensor.house_battery_max_peak_this_month"
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "outputInitially": false,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": true,
+        "ignoreCurrentStateUnavailable": true,
+        "outputProperties": [
+            {
+                "property": "max_peak",
+                "propertyType": "flow",
+                "value": "number",
+                "valueType": "entityState"
+            },
+            {
+                "property": "max_peak",
+                "propertyType": "msg",
+                "value": "number",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 250,
+        "y": 300,
+        "wires": [
+            [
+                "3d858dc76a124d92"
+            ]
+        ]
+    },
+    {
+        "id": "1e93fb3e5f1b71eb",
+        "type": "server-state-changed",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "Desired energy reserve this month changed",
+        "server": "73772e33.09523",
+        "version": 6,
+        "outputs": 1,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+                "sensor.house_battery_min_reserve_this_month"
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "outputInitially": false,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": true,
+        "ignoreCurrentStateUnavailable": true,
+        "outputProperties": [
+            {
+                "property": "min_reserve",
+                "propertyType": "flow",
+                "value": "number",
+                "valueType": "entityState"
+            },
+            {
+                "property": "min_reserve",
+                "propertyType": "msg",
+                "value": "number",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 250,
+        "y": 360,
+        "wires": [
+            [
+                "42cd90aec97566ee"
+            ]
+        ]
+    },
+    {
+        "id": "3d858dc76a124d92",
+        "type": "debug",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "Max peak",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "max_peak",
+        "targetType": "msg",
+        "statusVal": "max_peak",
+        "statusType": "auto",
+        "x": 500,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "42cd90aec97566ee",
+        "type": "debug",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "Min reserve",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "min_reserve",
+        "targetType": "msg",
+        "statusVal": "min_reserve",
+        "statusType": "auto",
+        "x": 510,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "66e46c7b42b1db8d",
+        "type": "server-state-changed",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "Peak safety margin changed",
+        "server": "73772e33.09523",
+        "version": 6,
+        "outputs": 1,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+                "input_number.house_battery_max_peak_safety_margin"
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "outputInitially": false,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": true,
+        "ignoreCurrentStateUnavailable": true,
+        "outputProperties": [
+            {
+                "property": "safety_margin",
+                "propertyType": "flow",
+                "value": "number",
+                "valueType": "entityState"
+            },
+            {
+                "property": "safety_margin",
+                "propertyType": "msg",
+                "value": "number",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 200,
+        "y": 420,
+        "wires": [
+            [
+                "5944a88138fec1c7"
+            ]
+        ]
+    },
+    {
+        "id": "5944a88138fec1c7",
+        "type": "debug",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "Safety margin",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "safety_margin",
+        "targetType": "msg",
+        "statusVal": "safety_margin",
+        "statusType": "auto",
+        "x": 420,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "ba9743a4458e41c7",
+        "type": "server-state-changed",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "EV charge state changed",
+        "server": "73772e33.09523",
+        "version": 6,
+        "outputs": 1,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+                "binary_sensor.peblar_ev_charging"
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "outputInitially": false,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": true,
+        "ignoreCurrentStateUnavailable": true,
+        "outputProperties": [
+            {
+                "property": "ev_charging",
+                "propertyType": "flow",
+                "value": "string",
+                "valueType": "entityState"
+            },
+            {
+                "property": "ev_charging",
+                "propertyType": "msg",
+                "value": "string",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 190,
+        "y": 480,
+        "wires": [
+            [
+                "4dab3d2137302713"
+            ]
+        ]
+    },
+    {
+        "id": "4dab3d2137302713",
+        "type": "debug",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "EV charging",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "ev_charging",
+        "targetType": "msg",
+        "statusVal": "safety_margin",
+        "statusType": "auto",
+        "x": 390,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "610c45ba2007bbb7",
+        "type": "change",
+        "z": "d99b81f8270826b1",
+        "g": "b6502b923a53af09",
+        "name": "Reserve %",
+        "rules": [
+            {
+                "t": "set",
+                "p": "reserve_percentage",
+                "pt": "msg",
+                "to": "$max([ 0, $min([ (batteries_available_energy / $flowContext(\"min_reserve\")) * 100, 100 ]) ])",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 370,
+        "y": 180,
+        "wires": [
+            [
+                "logic_function_hysteresis",
+                "8b5b1cb76a5df24a"
+            ]
+        ]
+    },
+    {
+        "id": "73772e33.09523",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 6,
+        "addon": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": [
+            "y",
+            "yes",
+            "true",
+            "on",
+            "home",
+            "open"
+        ],
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": false,
+        "heartbeatInterval": 30,
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "friendlyName",
+        "statusSeparator": "at: ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "h23",
+        "statusTimeFormat": "h:m",
+        "enableGlobalContextStore": true
+    },
+    {
+        "id": "9c47a349f7e4493d",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-home-assistant-websocket": "0.80.3"
+        }
+    }
+]

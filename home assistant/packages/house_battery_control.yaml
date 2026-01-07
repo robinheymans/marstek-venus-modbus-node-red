@@ -413,6 +413,7 @@ input_select:
     options:
       - Full stop # Stop (dis)charging and disengage grid relay
       - Self-consumption # Use your own solar production. Don't buy or sell. Target grid consumption = 0, e.g. "Nul op de meter (NoM)" in Dutch.
+      - NoM with Peak Shaving
       - Charge # Charge at maximum capacity or at set max grid consumption.
       - Charge PV # Charge when surplus PV is available, batteries will not discharge
       - Peak Shaving # Discharge only when grid consumption is above a certain threshold.
@@ -425,6 +426,7 @@ input_select:
     options: &SubStrategies
       - Full stop # Deactivate batteries
       - Self-consumption # Target grid consumption = 0
+      - NoM with Peak Shaving
       - Charge # Charge at maximum capacity or at set max grid consumption.
       - Charge PV # Charge when surplus PV is available, batteries will not discharge
       - Peak Shaving # Discharge only when grid consumption is above a certain threshold.

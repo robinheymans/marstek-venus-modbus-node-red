@@ -13,16 +13,233 @@ template:
         unit_of_measurement: "W"
         device_class: "power"
         state_class: "measurement"
+  - sensor:
+      - name: "Maximum Allowed Peak This Month"
+        unique_id: house_battery_max_peak_this_month
+        default_entity_id: sensor.house_battery_max_peak_this_month
+        unit_of_measurement: "kW"
+        state: >
+          {% set current_month = now().strftime('%B') | lower %}
+          {% set manual_setting = states('input_number.house_battery_max_peak_' + current_month) | float(0) %}
+          {% set actual_peak = states('sensor.dsmr_peak_maximum_current_month') | float(0) %}
+          {{ ([manual_setting, actual_peak] | max) | round(1, 'floor') }}
+        device_class: "power"
+        state_class: "measurement"
+        icon: mdi:summit
+      - name: "Minimum Reserve This Month"
+        unique_id: house_battery_min_reserve_this_month
+        default_entity_id: sensor.house_battery_min_reserve_this_month
+        unit_of_measurement: "%"
+        state: >
+          {% set current_month = now().strftime('%B') | lower %}
+          {{ states('input_number.house_battery_min_reserve_' + current_month) }}
+        device_class: "battery"
+        state_class: "measurement"
+        icon: mdi:battery-lock
 
 input_number:
-  house_battery_strategy_maximum_peak:
-    name: "Peak Shaving Maximum Allowed Peak"
-    min: 2000
-    max: 10000
-    step: 100
-    unit_of_measurement: "W"
+  house_battery_max_peak_january:
+    name: "Maximum Allowed Peak January"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
     mode: box
     icon: mdi:summit
+  house_battery_max_peak_february:
+    name: "Maximum Allowed Peak February"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_march:
+    name: "Maximum Allowed Peak March"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_april:
+    name: "Maximum Allowed Peak April"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_may:
+    name: "Maximum Allowed Peak May"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_june:
+    name: "Maximum Allowed Peak June"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_july:
+    name: "Maximum Allowed Peak July"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_august:
+    name: "Maximum Allowed Peak August"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_september:
+    name: "Maximum Allowed Peak September"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_october:
+    name: "Maximum Allowed Peak October"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_november:
+    name: "Maximum Allowed Peak November"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+  house_battery_max_peak_december:
+    name: "Maximum Allowed Peak December"
+    min: 2.5
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:summit
+
+  house_battery_min_reserve_january:
+    name: "Minimum Reserve January"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_february:
+    name: "Minimum Reserve February"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_march:
+    name: "Minimum Reserve March"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_april:
+    name: "Minimum Reserve April"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_may:
+    name: "Minimum Reserve May"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_june:
+    name: "Minimum Reserve June"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_july:
+    name: "Minimum Reserve July"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_august:
+    name: "Minimum Reserve August"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_september:
+    name: "Minimum Reserve September"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_october:
+    name: "Minimum Reserve October"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_november:
+    name: "Minimum Reserve November"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+  house_battery_min_reserve_december:
+    name: "Minimum Reserve December"
+    min: 0
+    max: 10
+    step: 0.1
+    unit_of_measurement: "kW"
+    mode: box
+    icon: mdi:battery-lock
+
+  house_battery_max_peak_safety_margin:
+    name: "Maximum Peak Safety Margin"
+    min: 0
+    max: 250
+    step: 10
+    unit_of_measurement: "W"
+    mode: box
+    icon: mdi:chart-sankey-variant
 
 input_boolean:
   house_battery_strategy_charge_allow_discharging:

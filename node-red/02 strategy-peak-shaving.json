@@ -36,7 +36,7 @@
             "b8e7bf7edfb3e4d8",
             "a9a4de7649f3262e"
         ],
-        "x": 984,
+        "x": 734,
         "y": 99,
         "w": 192,
         "h": 142
@@ -56,13 +56,35 @@
         },
         "nodes": [
             "d3f6c6adbeb1d1d4",
-            "328726af0cd604e3",
-            "5ed80e108f2a01a2"
+            "328726af0cd604e3"
         ],
-        "x": 284,
+        "x": 294,
         "y": 159,
-        "w": 642,
+        "w": 392,
         "h": 82
+    },
+    {
+        "id": "b48e240368fbc964",
+        "type": "group",
+        "z": "14a7fc83213e9b42",
+        "name": "Listen for configuration changes",
+        "style": {
+            "fill": "#d1d1d1",
+            "label": true,
+            "fill-opacity": "0.52"
+        },
+        "nodes": [
+            "fcff06f5c95a9047",
+            "11c18227bf856fb1",
+            "0530572e3fb75cbc",
+            "85fe802bd6900b80",
+            "7053f765d8b6cf9e",
+            "2c431aa4b3199e82"
+        ],
+        "x": 294,
+        "y": 279,
+        "w": 552,
+        "h": 202
     },
     {
         "id": "a4ed52a8841fd3bf",
@@ -85,7 +107,7 @@
         "y": 200,
         "wires": [
             [
-                "5ed80e108f2a01a2"
+                "328726af0cd604e3"
             ]
         ]
     },
@@ -108,7 +130,7 @@
         "name": "Return",
         "mode": "return",
         "links": [],
-        "x": 1025,
+        "x": 775,
         "y": 200,
         "wires": []
     },
@@ -119,7 +141,7 @@
         "g": "310ed90d6ad15c95",
         "name": "End (readme)",
         "info": "Should return a solution_array of battery objects\n\n## battery object format\n`{{id: string|number, mode: string, power: number}} battery solution`\n- id is an arbitrary battery ID\n- mode is \"stop\", \"charge\", \"discharge\" for Marstek\n- power in Watts\n\n### example array\nreturn this type of solution_array via msg.solutions\n` \nlet solution_array = [];\nsolution_array.push({id:\"M1\", mode: \"charge\", power: 100}); // per battery\nreturn {solutions: solution_array};\n` ",
-        "x": 1080,
+        "x": 830,
         "y": 140,
         "wires": []
     },
@@ -130,11 +152,11 @@
         "g": "11674ae2cd15c76b",
         "name": "Call self-consumption",
         "links": [
-            "7c4fe4a791ef18b2"
+            "57dc0f9224530077"
         ],
         "linkType": "static",
         "timeout": "30",
-        "x": 800,
+        "x": 560,
         "y": 200,
         "wires": [
             [
@@ -148,14 +170,14 @@
         "z": "14a7fc83213e9b42",
         "g": "11674ae2cd15c76b",
         "name": "Setup",
-        "func": "// Set target grid consumption for the PID controller\nmsg.house_target_grid_consumption_in_w = msg.max_peak;\n\n// Only allow discharging\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", false, true);\nRED.util.setMessageProperty(msg, \"advanced_settings.charge_disabled\", true, true);\n\nreturn msg;",
+        "func": "let ev_charging = (flow.get('ev_charging') || 'off') === 'on';\nlet max_peak = flow.get('max_peak') || 2.5;\nlet safety_margin = flow.get('safety_margin') || 100;\n\nmsg.house_target_grid_consumption_in_w = (max_peak * 1000) - safety_margin;\n\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", ev_charging, true);\nRED.util.setMessageProperty(msg, \"advanced_settings.charge_disabled\", true, true);\n\nnode.status({\n    fill: 'blue',\n    shape: \"dot\",\n    text: `Target: ${msg.house_target_grid_consumption_in_w}W (charge: false, discharge: ${!ev_charging}) at ${new Date().toLocaleString(\"nl-BE\")}`\n});\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 610,
+        "x": 370,
         "y": 200,
         "wires": [
             [
@@ -164,72 +186,250 @@
         ]
     },
     {
-        "id": "5ed80e108f2a01a2",
-        "type": "api-current-state",
+        "id": "fcff06f5c95a9047",
+        "type": "server-state-changed",
         "z": "14a7fc83213e9b42",
-        "g": "11674ae2cd15c76b",
-        "name": "Maximum Allowed Peak",
-        "server": "176d29a.6f648d6",
-        "version": 3,
+        "g": "b48e240368fbc964",
+        "name": "Maximum allowed peak this month changed",
+        "server": "73772e33.09523",
+        "version": 6,
         "outputs": 1,
-        "halt_if": "",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "input_number.house_battery_strategy_maximum_peak",
-        "state_type": "str",
-        "blockInputOverrides": true,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+                "sensor.house_battery_max_peak_this_month"
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "outputInitially": false,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": true,
+        "ignoreCurrentStateUnavailable": true,
         "outputProperties": [
             {
-                "property": "payload",
+                "property": "max_peak",
+                "propertyType": "flow",
+                "value": "number",
+                "valueType": "entityState"
+            },
+            {
+                "property": "max_peak",
                 "propertyType": "msg",
+                "value": "number",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 490,
+        "y": 320,
+        "wires": [
+            [
+                "11c18227bf856fb1"
+            ]
+        ]
+    },
+    {
+        "id": "11c18227bf856fb1",
+        "type": "debug",
+        "z": "14a7fc83213e9b42",
+        "g": "b48e240368fbc964",
+        "name": "Max peak",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "max_peak",
+        "targetType": "msg",
+        "statusVal": "max_peak",
+        "statusType": "auto",
+        "x": 740,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "0530572e3fb75cbc",
+        "type": "server-state-changed",
+        "z": "14a7fc83213e9b42",
+        "g": "b48e240368fbc964",
+        "name": "EV charge state changed",
+        "server": "73772e33.09523",
+        "version": 6,
+        "outputs": 1,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+                "binary_sensor.peblar_ev_charging"
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "outputInitially": false,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": true,
+        "ignoreCurrentStateUnavailable": true,
+        "outputProperties": [
+            {
+                "property": "ev_charging",
+                "propertyType": "flow",
                 "value": "string",
                 "valueType": "entityState"
             },
             {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            },
-            {
-                "property": "max_peak",
+                "property": "ev_charging",
                 "propertyType": "msg",
                 "value": "string",
                 "valueType": "entityState"
             }
         ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 420,
-        "y": 200,
+        "x": 430,
+        "y": 380,
         "wires": [
             [
-                "328726af0cd604e3"
+                "85fe802bd6900b80"
             ]
         ]
     },
     {
-        "id": "176d29a.6f648d6",
-        "type": "server",
-        "name": "Home Assistant (Dubbel)",
-        "addon": true,
-        "rejectUnauthorizedCerts": true,
-        "ha_boolean": [],
-        "connectionDelay": false,
-        "cacheJson": false,
-        "heartbeat": false,
-        "heartbeatInterval": "",
-        "statusSeparator": "",
-        "enableGlobalContextStore": false
+        "id": "85fe802bd6900b80",
+        "type": "debug",
+        "z": "14a7fc83213e9b42",
+        "g": "b48e240368fbc964",
+        "name": "EV charging",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "ev_charging",
+        "targetType": "msg",
+        "statusVal": "safety_margin",
+        "statusType": "auto",
+        "x": 630,
+        "y": 380,
+        "wires": []
     },
     {
-        "id": "11b6b870318e6007",
+        "id": "7053f765d8b6cf9e",
+        "type": "server-state-changed",
+        "z": "14a7fc83213e9b42",
+        "g": "b48e240368fbc964",
+        "name": "Peak safety margin changed",
+        "server": "73772e33.09523",
+        "version": 6,
+        "outputs": 1,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+                "input_number.house_battery_max_peak_safety_margin"
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "outputInitially": false,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": true,
+        "ignoreCurrentStateUnavailable": true,
+        "outputProperties": [
+            {
+                "property": "safety_margin",
+                "propertyType": "flow",
+                "value": "number",
+                "valueType": "entityState"
+            },
+            {
+                "property": "safety_margin",
+                "propertyType": "msg",
+                "value": "number",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 440,
+        "y": 440,
+        "wires": [
+            [
+                "2c431aa4b3199e82"
+            ]
+        ]
+    },
+    {
+        "id": "2c431aa4b3199e82",
+        "type": "debug",
+        "z": "14a7fc83213e9b42",
+        "g": "b48e240368fbc964",
+        "name": "Safety margin",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "safety_margin",
+        "targetType": "msg",
+        "statusVal": "safety_margin",
+        "statusType": "auto",
+        "x": 660,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "73772e33.09523",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 6,
+        "addon": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": [
+            "y",
+            "yes",
+            "true",
+            "on",
+            "home",
+            "open"
+        ],
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": false,
+        "heartbeatInterval": 30,
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "friendlyName",
+        "statusSeparator": "at: ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "h23",
+        "statusTimeFormat": "h:m",
+        "enableGlobalContextStore": true
+    },
+    {
+        "id": "2bcaade5a3cb707d",
         "type": "global-config",
         "env": [],
         "modules": {
