@@ -422,7 +422,6 @@ input_select:
       - Dynamic # Requires a dynamic tariff contract and the Cheapest Hours HACS add-on
       - Charge # Uses self-consumption strategy with smart settings and target grid consumption > 0
       - Charge PV # Charge when surplus PV is available, batteries will not discharge
-      - Peak Shaving # Discharge only when grid consumption is above a certain threshold.
       - NoM with Peak Shaving
     icon: mdi:home-battery
 
@@ -432,9 +431,8 @@ input_select:
     options: &SubStrategies
       - Full stop # Deactivate batteries
       - Self-consumption # Target grid consumption = 0
-      - Charge # Charge at maximum capacity or at set max grid consumption.
+      - Charge # Uses self-consumption strategy with smart settings and target grid consumption > 0
       - Charge PV # Charge when surplus PV is available, batteries will not discharge
-      - Peak Shaving # Discharge only when grid consumption is above a certain threshold.
       - NoM with Peak Shaving
 
   # How often is battery priority cycled automatically?

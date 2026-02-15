@@ -36,7 +36,7 @@
             "dfb18f1c8a5b43e7",
             "6e519e50bff028d6"
         ],
-        "x": 874,
+        "x": 904,
         "y": 99,
         "w": 192,
         "h": 122
@@ -79,12 +79,14 @@
             "66e46c7b42b1db8d",
             "5944a88138fec1c7",
             "ba9743a4458e41c7",
-            "4dab3d2137302713"
+            "4dab3d2137302713",
+            "03e8f07dd23d6ffd",
+            "8e4d71b1fa339bf9"
         ],
         "x": 54,
         "y": 259,
         "w": 572,
-        "h": 262
+        "h": 322
     },
     {
         "id": "fb5f128e23bb0c91",
@@ -130,7 +132,7 @@
         "name": "Return",
         "mode": "return",
         "links": [],
-        "x": 915,
+        "x": 945,
         "y": 180,
         "wires": []
     },
@@ -141,7 +143,7 @@
         "g": "a7d3b1401f7dedb4",
         "name": "End (readme)",
         "info": "Should return a solution_array of battery objects\n\n## battery object format\n`{{id: string|number, mode: string, power: number}} battery solution`\n- id is an arbitrary battery ID\n- mode is \"stop\", \"charge\", \"discharge\" for Marstek\n- power in Watts\n\n### example array\nreturn this type of solution_array via msg.solutions\n` \nlet solution_array = [];\nsolution_array.push({id:\"M1\", mode: \"charge\", power: 100}); // per battery\nreturn {solutions: solution_array};\n` ",
-        "x": 970,
+        "x": 1000,
         "y": 140,
         "wires": []
     },
@@ -154,11 +156,11 @@
         "tosidebar": false,
         "console": false,
         "tostatus": true,
-        "complete": "reserve_percentage",
-        "targetType": "msg",
+        "complete": "$round(reserve_percentage, 2) & \"% (\" & $round(batteries_available_energy, 2) & \"/\" & $round($flowContext(\"min_reserve\"), 2) & \"kWh)\"",
+        "targetType": "jsonata",
         "statusVal": "reserve_percentage",
         "statusType": "auto",
-        "x": 590,
+        "x": 570,
         "y": 100,
         "wires": []
     },
@@ -168,7 +170,7 @@
         "z": "d99b81f8270826b1",
         "g": "b6502b923a53af09",
         "name": "Determine strategy",
-        "func": "let current_grid = msg.grid_power || 0;\nlet battery_power = msg.batteries_total_power || 0; // Positief = laden, Negatief = ontladen\nlet max_peak = flow.get('max_peak') || 2.5;\nlet safety_margin = flow.get('safety_margin') || 100;\nlet ev_charging = (flow.get('ev_charging') || 'off') === 'on';\n\nlet peak_limit_watts = (max_peak * 1000) - safety_margin;\nlet reserve_pct = msg.reserve_percentage;\n\nlet is_recharging = flow.get(\"strategy_force_recharge_active\") || false;\n\nlet virtual_grid_power = current_grid - battery_power;\n\nif (reserve_pct < 50) {\n    is_recharging = true; \n} else if (reserve_pct >= 99) {\n    is_recharging = false;\n}\n\nflow.set(\"strategy_force_recharge_active\", is_recharging);\n\nlet target_consumption = 0;\nlet charge_disabled = false;\nlet discharge_disabled = ev_charging; // Standaard is ontladen niet toegestaan wanneer de EV insteekt\nlet status_text = \"\";\nlet status_color = \"green\";\n\nif (is_recharging) {\n    // SCENARIO A: NOODLADEN (Reserve < 50%)\n    // Batterij opladen met maximum piek limiet\n    target_consumption = peak_limit_watts;\n    charge_disabled = false;\n    status_text = \"Recharge reserve\";\n    status_color = \"red\";\n\n} else if (reserve_pct > 99) {\n    // SCENARIO B: BATTERIJ VOL\n    // Maximaal zelfverbruik, nul op de meter\n    target_consumption = 0;\n    charge_disabled = false;\n    status_text = \"Self-consumption\";\n    status_color = \"blue\";\n\n} else {\n    // SCENARIO C: PEAK PROTECTION BUFFER (50% - 99%)\n    // Peak protection, maar buffer mag opgeladen worden bij zonne-overschot\n    if (virtual_grid_power < 250) {\n        // Laag verbruik, mogelijk zonne-overschot dus laden toestaan en ontladen niet\n        target_consumption = 0;\n        charge_disabled = false;\n        discharge_disabled = true;\n        status_text = \"Solar charge\";\n        status_color = \"green\";\n    } else {\n        // Hoger verbruik, peak shaving activeren\n        target_consumption = peak_limit_watts;\n        charge_disabled = true;\n        status_text = \"Peak shaving\";\n        status_color = \"yellow\";\n    }\n}\n\nmsg.house_target_grid_consumption_in_w = target_consumption;\nmsg.target = \"Self-consumption\";\n\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", discharge_disabled, true);\nRED.util.setMessageProperty(msg, \"advanced_settings.charge_disabled\", charge_disabled, true);\n\n// Status update\nnode.status({\n    fill: status_color,\n    shape: \"dot\",\n    text: `${status_text} | Grid: ${Math.round(virtual_grid_power)}W | Target: ${Math.round(target_consumption)}W (charge: ${!charge_disabled}, discharge: ${!discharge_disabled}) at ${new Date().toLocaleString(\"nl-BE\")}`\n});\n\nreturn msg;",
+        "func": "let current_grid = msg.grid_power || 0;\nlet battery_power = msg.batteries_total_power || 0; // Positief = laden, Negatief = ontladen\nlet max_peak = flow.get('max_peak') || 2.5;\nlet current_peak = flow.get('current_peak') || 2.5;\nlet safety_margin = flow.get('safety_margin') || 100;\nlet ev_charging = (flow.get('ev_charging') || 'off') === 'on';\n\n// Retrieve Min Reserve and set Buffer\nlet min_reserve = flow.get('min_reserve') || 0; \nlet reserve_buffer = 0.05; // Stop discharging 0.05 kWh before hitting reserve\n\nlet peak_limit_watts = (max_peak * 1000) - safety_margin;\nlet current_peak_watts = (current_peak * 1000) - safety_margin;\nlet reserve_pct = msg.reserve_percentage;\nlet is_recharging = flow.get(\"strategy_force_recharge_active\") || false;\nlet virtual_grid_power = current_grid - battery_power;\n\n// Force Recharge Logic (Keep percentage based for deep discharge protection)\nif (reserve_pct < 50) {\n    is_recharging = true; \n} else if (reserve_pct >= 99) {\n    is_recharging = false;\n}\n\nflow.set(\"strategy_force_recharge_active\", is_recharging);\n\nlet target_consumption = 0;\nlet charge_disabled = false;\nlet discharge_disabled = ev_charging; // Standaard is ontladen niet toegestaan wanneer de EV insteekt\nlet status_text = \"\";\nlet status_color = \"green\";\n\nif (is_recharging) {\n    // SCENARIO A: NOODLADEN (Reserve < 50%)\n    // Batterij opladen aan maximum huidige piek (minstens 2.5)\n    target_consumption = current_peak_watts;\n    charge_disabled = false;\n    status_text = \"Reserve bijladen\";\n    status_color = \"red\";\n\n} else if (msg.batteries_available_energy > (min_reserve + reserve_buffer)) {\n    // SCENARIO B: BATTERIJ VOL\n    // Maximaal zelfverbruik, nul op de meter\n    target_consumption = 0;\n    charge_disabled = false;\n    status_text = \"Zelfconsumptie\";\n    status_color = \"blue\";\n\n} else {\n    // SCENARIO C: PEAK PROTECTION BUFFER (Reserve < Energy < Reserve + Buffer)\n    // Peak protection, maar buffer mag opgeladen worden bij zonne-overschot\n    if (virtual_grid_power < 250) {\n        // Laag verbruik, mogelijk zonne-overschot dus laden toestaan en ontladen niet\n        target_consumption = 0;\n        charge_disabled = false;\n        discharge_disabled = true; // Stop discharge here to preserve reserve\n        status_text = \"Zonneladen\";\n        status_color = \"green\";\n    } else {\n        // Hoger verbruik, peak shaving activeren\n        target_consumption = peak_limit_watts;\n        charge_disabled = true;\n        status_text = \"Piek vermijden\";\n        status_color = \"yellow\";\n    }\n}\n\nmsg.house_target_grid_consumption_in_w = target_consumption;\nmsg.target = \"Self-consumption\";\n\nmsg.status_message = `${status_text} | P1: ${Math.round(virtual_grid_power)}W, Doel: ${Math.round(target_consumption)}W | Laden: ${!charge_disabled ? \"ja\" : \"nee\"}, ontladen: ${!discharge_disabled ? \"ja\" : \"nee\"}`;\nmsg.status_message_long = `\n**Actieve logica**: ${status_text}\n**Vermogen**: P1-meter: ${Math.round(virtual_grid_power)}W | Doel: ${Math.round(target_consumption)}W\n**Batterijmodus**: Laden ${!charge_disabled ? \"toegestaan\" : \"niet toegestaan\"}, ontladen ${!discharge_disabled ? \"toegestaan\" : \"niet toegestaan\"}\n**Reserve**: ${Math.round(msg.reserve_percentage)}% (${msg.batteries_available_energy.toFixed(2)}/${min_reserve.toFixed(2)} kWh)\n`.trim();\n\nRED.util.setMessageProperty(msg, \"advanced_settings.discharge_disabled\", discharge_disabled, true);\nRED.util.setMessageProperty(msg, \"advanced_settings.charge_disabled\", charge_disabled, true);\n\n// Status update\nnode.status({\n    fill: status_color,\n    shape: \"dot\",\n    text: `${status_text} | Grid: ${Math.round(virtual_grid_power)}W | Target: ${Math.round(target_consumption)}W (charge: ${!charge_disabled}, discharge: ${!discharge_disabled}) at ${new Date().toLocaleString(\"nl-BE\")}`\n});\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -179,7 +181,8 @@
         "y": 180,
         "wires": [
             [
-                "33d114777db61f9b"
+                "33d114777db61f9b",
+                "806b9172652d8741"
             ]
         ]
     },
@@ -217,7 +220,7 @@
             "substring": [],
             "regex": []
         },
-        "outputInitially": false,
+        "outputInitially": true,
         "stateType": "str",
         "ifState": "",
         "ifStateType": "str",
@@ -270,7 +273,7 @@
             "substring": [],
             "regex": []
         },
-        "outputInitially": false,
+        "outputInitially": true,
         "stateType": "str",
         "ifState": "",
         "ifStateType": "str",
@@ -299,7 +302,7 @@
             }
         ],
         "x": 250,
-        "y": 360,
+        "y": 420,
         "wires": [
             [
                 "42cd90aec97566ee"
@@ -339,7 +342,7 @@
         "statusVal": "min_reserve",
         "statusType": "auto",
         "x": 510,
-        "y": 360,
+        "y": 420,
         "wires": []
     },
     {
@@ -359,7 +362,7 @@
             "substring": [],
             "regex": []
         },
-        "outputInitially": false,
+        "outputInitially": true,
         "stateType": "str",
         "ifState": "",
         "ifStateType": "str",
@@ -388,7 +391,7 @@
             }
         ],
         "x": 200,
-        "y": 420,
+        "y": 480,
         "wires": [
             [
                 "5944a88138fec1c7"
@@ -410,7 +413,7 @@
         "statusVal": "safety_margin",
         "statusType": "auto",
         "x": 420,
-        "y": 420,
+        "y": 480,
         "wires": []
     },
     {
@@ -430,7 +433,7 @@
             "substring": [],
             "regex": []
         },
-        "outputInitially": false,
+        "outputInitially": true,
         "stateType": "str",
         "ifState": "",
         "ifStateType": "str",
@@ -459,7 +462,7 @@
             }
         ],
         "x": 190,
-        "y": 480,
+        "y": 540,
         "wires": [
             [
                 "4dab3d2137302713"
@@ -481,7 +484,7 @@
         "statusVal": "safety_margin",
         "statusType": "auto",
         "x": 390,
-        "y": 480,
+        "y": 540,
         "wires": []
     },
     {
@@ -514,6 +517,101 @@
         ]
     },
     {
+        "id": "806b9172652d8741",
+        "type": "ha-sensor",
+        "z": "d99b81f8270826b1",
+        "name": "Status message",
+        "entityConfig": "46241c9c04111cfb",
+        "version": 0,
+        "state": "status_message",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "long_explanation",
+                "value": "status_message_long",
+                "valueType": "msg"
+            }
+        ],
+        "inputOverride": "allow",
+        "outputProperties": [],
+        "x": 760,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "03e8f07dd23d6ffd",
+        "type": "server-state-changed",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "Current monthly peak changed",
+        "server": "73772e33.09523",
+        "version": 6,
+        "outputs": 1,
+        "exposeAsEntityConfig": "",
+        "entities": {
+            "entity": [
+                "sensor.dsmr_peak_maximum_current_month"
+            ],
+            "substring": [],
+            "regex": []
+        },
+        "outputInitially": true,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": true,
+        "ignoreCurrentStateUnavailable": true,
+        "outputProperties": [
+            {
+                "property": "current_peak",
+                "propertyType": "flow",
+                "value": "number",
+                "valueType": "entityState"
+            },
+            {
+                "property": "current_peak",
+                "propertyType": "msg",
+                "value": "number",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 210,
+        "y": 360,
+        "wires": [
+            [
+                "8e4d71b1fa339bf9"
+            ]
+        ]
+    },
+    {
+        "id": "8e4d71b1fa339bf9",
+        "type": "debug",
+        "z": "d99b81f8270826b1",
+        "g": "6848d404c55a5df8",
+        "name": "Current peak",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "current_peak",
+        "targetType": "msg",
+        "statusVal": "safety_margin",
+        "statusType": "auto",
+        "x": 430,
+        "y": 360,
+        "wires": []
+    },
+    {
         "id": "73772e33.09523",
         "type": "server",
         "name": "Home Assistant",
@@ -544,7 +642,48 @@
         "enableGlobalContextStore": true
     },
     {
-        "id": "61aaa1a3ffeac137",
+        "id": "46241c9c04111cfb",
+        "type": "ha-entity-config",
+        "server": "73772e33.09523",
+        "deviceConfig": "",
+        "name": "Peblar EV Charger Custom Strategy Status",
+        "version": 6,
+        "entityType": "sensor",
+        "haConfig": [
+            {
+                "property": "name",
+                "value": "EV Charger Custom Strategy Status"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:card-text-outline"
+            },
+            {
+                "property": "entity_picture",
+                "value": ""
+            },
+            {
+                "property": "entity_category",
+                "value": "diagnostic"
+            },
+            {
+                "property": "device_class",
+                "value": ""
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": ""
+            },
+            {
+                "property": "state_class",
+                "value": ""
+            }
+        ],
+        "resend": false,
+        "debugEnabled": false
+    },
+    {
+        "id": "b3a7e00668839dfd",
         "type": "global-config",
         "env": [],
         "modules": {
