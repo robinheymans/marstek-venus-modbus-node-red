@@ -1,6 +1,155 @@
 # Release Notes
 All releases follow Semantic Versioning (SemVer). Every release provides a fresh `home assistant/dashboard.yaml` to import.
 
+## 4.4.2
+- **Fix: Zonneplan integration sensor name change (fixes #76)**
+  * Added support for renamed Zonneplan sensor via new datasource option 'Zonneplan (one)'
+
+- **Fix: Spelling corrections in documentation and dashboard**
+  * Corrected 17 spelling errors across documentation files and dashboard
+  * Thanks to Residenteur, sammyjo468, BSmelik and others for pointing out the eye wattering errors and promoting some maintenance.
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `node-red/02 strategy-dynamic.json`
+
+## 4.4.1
+- **Fix: Frank Energie integration support (fixes #75)**
+  * Added support for Frank Energie via the [HiDiHo01 Home Assistant integration](https://github.com/HiDiHo01/home-assistant-frank_energie)
+  * Dynamic strategy now includes proper sensor configuration for Frank Energie users
+
+- **Fix: Dollarless JSONata not working for some users (fixes #72)**
+  * Resolved compatibility issues with JSONata expressions
+
+- **Setup: Improved P1 sensor configuration instructions (fixes #64)**
+  * Enhanced documentation in getting started guide for P1 meter setup
+  * Clarified configuration examples in `house_battery_control_config.yaml`
+
+- **Documentation: Alternative energy provider guidance (fixes #57)**
+  * Added suggestions for users whose energy provider isn't directly supported
+  * Improved dynamic strategy setup documentation
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control_config.yaml`
+  - `node-red/02 strategy-dynamic.json`
+
+## 4.4.0
+- **Feature: Selectable strategies per period in Dynamic strategy**
+  * **Choose your strategy per period** - Select which strategy to use during cheapest, expensive, and regular periods independently
+  * **Baseline strategy** - Choose between Charge PV, Self-consumption, or Full stop for regular hours
+  * **Cheapest period strategy** - Choose between Charge or Charge PV during low-price windows
+  * **Expensive period strategy** - Choose between Self-consumption or Sell during high-price windows
+  * **Smart activation thresholds** - Configure when cheapest period activates (tariff limit) and when expensive period activates (minimum price spread)
+  * **Price data table (insights mode)** - Table shows hourly prices for today and tomorrow to help you analyze strategy performance, when insights mode is enabled
+  * **Estimated profit calculator** - See the estimated profit per kWh based on current price spreads
+  * **Negative price support** - Cheapest period threshold can now be set to 0, enabling strategies that only activate during negative energy prices
+
+- **Improvements in Dynamic strategy**
+  * **Improved period detection** - Checks period every 15 mins accurately and without delay
+  * **Better update frequency** - Data Source updates every 60 minutes (this could be turned into 1x per day at 15:00 hrs)
+
+- **Fix: Insight Mode reliability (formerly Debug Mode)**
+  * **Possibly resolved issue #63** - Fixed Insight Mode not working reliably for some users
+  * **Renamed "Debug Mode" to "Insight Mode"** - Avoids confusion between Node-RED's "debug NNNode" vs HBC's "debug MMMode"
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+  - `node-red/01 start-flow.json`
+  - `node-red/02 strategy-dynamic.json`
+
+## 4.3.3
+- **[Docs.homebatterycontrol.com live](https://docs.homebatterycontrol.com)** celebrating the supporters of this project
+  * **Updated documentation links** - All documentation now points to docs.homebatterycontrol.com
+  * **Documentation navigation and table of contents** - The docs now have next/previous navi and a Table of Contents
+  * **Extravagant unnecessary styling** - Yes, required.
+
+- **Dashboard tweaks**
+  * **More pretty info & warnings** - Replaced old formatting with modern ha-alert components
+  * **Tweaked texts and visibility** - mostly on the home
+
+- **Experimental** an 'all-flows-in-file.json' has been added
+  * To possibly ease initial project import or updates. Feedback? Join our Discord.
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+
+## 4.3.2
+- **Fix: Improve PID controller safety, logging, and integral term handling**
+  * **Controller disabled warning** - Added clear warning message when all PID gains are zero to prevent silent failures
+  * **Simplified load distribution** - Removed redundant debug flag system and streamlined logging for better maintainability
+  * **Integral term safety** - Fixed divide-by-zero issue when Integral gain was set to 0, improving controller robustness
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `node-red/02 strategy-self-consumption.json`
+
+- **License Changed:**
+  - This open source project started in the community of tinkerers, hobbyists and off-time engineers and should stay available for said community. Providing an open way to control and manage your energy systems. And I aim for any development on the project to also benefit said community.
+  - The GPL 3.0 license seems to better reflect this goal. This and upcoming versions will be released using this license.
+  - Kind regards and happy tinkering, @gitcodebob
+
+## 4.3.1
+- **Fix: Deprecated YAML syntax**
+  * **Trigger platform** - Updated event trigger syntax in trace sensor from deprecated `platform: event`
+
+- **Files Changed:**
+  - `home assistant/packages/house_battery_control.yaml`
+
+## 4.3.0
+- **Feature: new Sell strategy and updated charge strategy**
+  * **Configurable goals** - Control behavior with SoC target, Energy target or unlimitted goals.
+  * **Configurable power** - Set for maximum or power limited (dis)charging. Choosing between speed or lower peak power.
+  * **Rebuilt charge control** - Charge strategy rebuilt to match Sell strategy capabilities with maximum power and regulated charging options
+  * **Dashboard controls** - New UI controls for charge and sell settings
+  * **Note** - Please review your Charge Strategy settings. Old charge settings have reset or been discarded. 
+
+- **Improvement: Exception handling**
+  * **Error resilience** - All strategy flows now handle unhandled exceptions gracefully
+  * **Better diagnostics** - Exceptions are caught, logged and displayed on the debug dashboard for troubleshooting
+
+- **Improvement: Version labeling**
+  * **Clear versioning** - All strategy flow tabs now display version numbers
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+  - `node-red/01 start-flow.json`
+  - `node-red/02 strategy-charge-pv.json`
+  - `node-red/02 strategy-charge.json`
+  - `node-red/02 strategy-dynamic.json`
+  - `node-red/02 strategy-full-stop.json`
+  - `node-red/02 strategy-self-consumption.json`
+  - `node-red/02 strategy-sell.json`
+  - `node-red/02 strategy-timed.json`
+
+## 4.2.0
+- **Feature: Hideable onboarding section**
+  * **Hide onboarding UI** - New button allows users to hide the onboarding section after completing setup
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+
+## 4.1.0
+- **Feature: Configurable battery charge limits**
+  * **User-controlled SoC limits** - New input helpers allow you to set custom minimum and maximum State of Charge (SoC) limits per battery
+  * **Override hardware defaults** - The system now always uses these input helpers instead of reading limits from the battery device, providing more flexibility
+  * **Settings tab** - The battery configuration settings are now consolidated on the settings tab
+  * **Documentation included** - New section in Advanced Features explains how to use charge limits effectively
+  * Kuddos to [@hugovdberg](https://github.com/Hugovdberg)
+
+- **Fix: Grid power sensor configuration**
+  * Corrected grid power sensor name property in the `house_battery_control_**config**.yaml` to prevent Home Assistant from generating incorrect entity id.
+  * Note: this is relevant for new users and fresh installs only. 
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+  - `home assistant/packages/house_battery_control_config.yaml`
+  - `node-red/01 start-flow.json`
+
 ## 4.0.0
 - **Feat: Add visual flow execution tracking and detailed logging to dashboard**
   * **Visual flow execution tracking** - You can now see which strategy flows your system executed and in what order, helping you understand the decision-making process in real-time

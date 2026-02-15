@@ -10,24 +10,24 @@ Open-source battery control for Home Assistant & Node-RED. Control your home bat
 ## Quick Navigation
 
 ### 🚀 Getting Started
-- **[Installation Guide](01-getting-started.md)** - Step-by-step setup instructions
-- **[Modbus Setup](02-modbus-setup.md)** - Connect your batteries to Home Assistant
+- **[Installation Guide](/01-getting-started)** - Step-by-step setup instructions
+- **[Modbus Setup](/02-modbus-setup)** - Connect your batteries to Home Assistant
 
 ### ⚡ Control Strategies
-- **[Strategy Overview](03-strategies.md)** - Compare all available strategies
-- **[Self-Consumption Setup](04-setup-self-consumption.md)** - PID controller tuning guide
-- **[Dynamic Strategy Setup](05-setup-dynamic.md)** - Price-based automation
+- **[Strategy Overview](/03-strategies)** - Compare all available strategies
+- **[Self-Consumption Setup](/04-setup-self-consumption)** - PID controller tuning guide
+- **[Dynamic Strategy Setup](/05-setup-dynamic)** - Price-based automation
 
 ### 🔧 Advanced Topics
-- **[Advanced Features](06-advanced-features.md)** - EV trigger, multi-battery, 3-phase
-- **[Troubleshooting](07-troubleshooting.md)** - Common issues and solutions
+- **[Advanced Features](/06-advanced-features)** - EV trigger, multi-battery, 3-phase
+- **[Troubleshooting](/07-troubleshooting)** - Common issues and solutions
 
 ---
 
 ## About This Project
 
 Home Battery Control provides ready-to-use Node-RED flows and Home Assistant configurations for:
-- **Multiple charging strategies** - Self-consumption, timed, dynamic, solar-only, and more
+- **Multiple control strategies** - Self-consumption, timed, dynamic, charge, sell, solar-only, and more
 - **Advanced PID control** - Fine-tuned battery management
 - **Easy customization** - Adapt to your specific hardware and needs
 - **Community-driven** - Open source and actively maintained

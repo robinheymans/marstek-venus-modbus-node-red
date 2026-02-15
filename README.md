@@ -12,10 +12,11 @@ This project is designed for hobbyists who want full control over their home bat
 [![Buy Us A Battery](https://img.shields.io/badge/Buy%20Us%20A%20Battery-Support-FFDD00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/home.battery.control)
 
 ## Features
+- **You don't need to be a programmer**
 - **Node-RED Control Flows:** Easy to import and use control flows for battery charge/discharge ([node-red/](node-red/))
-- **Home Assistant Integration:** Example configuration for seamless smart home integration ([home assistant/](home%20assistant/))
-- **Customizable:** Adapt the flows and configuration to your specific battery hardware and automation needs
-- **Multiple Strategies:** [Self-consumption](docs/04-setup-self-consumption.md) (use your own energy), [Timed](node-red/02%20strategy-timed.json), [Dynamic](docs/05-setup-dynamic.md) (price-based), [Charge](node-red/02%20strategy-charge.json), [Charge PV](node-red/02%20strategy-charge-pv.json) (solar-only), [Full Stop](node-red/02%20strategy-full-stop.json). Easily add your own. See [all strategies](docs/03-strategies.md).
+- **Home Assistant Integration:** Premade dashboard for onboarding and control. Example configuration files included. ([home assistant/](home%20assistant/))
+- **Customizable:** Tweakers? Adapt the flows and configuration to your specific battery hardware and automation needs
+- **Multiple Strategies:** [Self-consumption](docs/04-setup-self-consumption.md) (use your own energy), [Timed](node-red/02%20strategy-timed.json), [Dynamic](docs/05-setup-dynamic.md) (price-based), [Charge](node-red/02%20strategy-charge.json), [Sell](node-red/02%20strategy-sell.json), [Charge PV](node-red/02%20strategy-charge-pv.json) (solar-only), [Full Stop](node-red/02%20strategy-full-stop.json). Easily add your own. See [all strategies](docs/03-strategies.md).
 - **Easy Updates:** Grab the latest control flow without losing your personal configurations
 
 ## What's New? ![Release](https://img.shields.io/github/v/release/gitcodebob/marstek-venus-rs485-node-red)
@@ -70,8 +71,13 @@ The Node-RED + HA control schema is based on the approach by Ruald Ordelman. And
 ## Contributing
 For major changes, please open an issue first to discuss what you would like to change.
 
+For documentation improvements, build the docs locally via docker to preview the result
+```powershell
+docker run --rm -v "${PWD}/docs:/usr/src/app" -p 4000:4000 starefossen/github-pages
+```
+
 ## License
-![License](https://img.shields.io/github/license/gitcodebob/marstek-venus-rs485-node-red) MIT
+![License](https://img.shields.io/github/license/gitcodebob/marstek-venus-rs485-node-red)
 
 ## Getting help
 For questions or suggestions, open an issue on GitHub or join our [`Marstek RS485/Node-Red besturing` Discord](https://discord.gg/yeAGaE4kgy).

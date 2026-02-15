@@ -7,13 +7,13 @@ template:
       # House battery control | Grid power
       # Your P1 meter indicates the power drawn or returned to grid.
       # This "P1 meter power" sensor acts as an alias for you power sensing configuration and is used throughout the node-RED scripts.
-      - name: "Grid Power"
+      - name: "P1 Meter Power"
         default_entity_id: sensor.p1_meter_power
         state: "{{ states('sensor.dsmr_power_current') }}"
         unit_of_measurement: "W"
         device_class: "power"
         state_class: "measurement"
-  - sensor:
+
       - name: "Maximum Allowed Peak This Month"
         unique_id: house_battery_max_peak_this_month
         default_entity_id: sensor.house_battery_max_peak_this_month
