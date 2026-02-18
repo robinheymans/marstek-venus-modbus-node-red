@@ -9,6 +9,7 @@ template:
       # This "P1 meter power" sensor acts as an alias for you power sensing configuration and is used throughout the node-RED scripts.
       - name: "P1 Meter Power"
         default_entity_id: sensor.p1_meter_power
+        unique_id: p1_meter_power
         state: "{{ states('sensor.dsmr_power_current') }}"
         unit_of_measurement: "W"
         device_class: "power"
@@ -29,12 +30,11 @@ template:
       - name: "Minimum Reserve This Month"
         unique_id: house_battery_min_reserve_this_month
         default_entity_id: sensor.house_battery_min_reserve_this_month
-        unit_of_measurement: "%"
+        unit_of_measurement: "kW"
         state: >
           {% set current_month = now().strftime('%B') | lower %}
           {{ states('input_number.house_battery_min_reserve_' + current_month) }}
-        device_class: "battery"
-        state_class: "measurement"
+        device_class: "energy"
         icon: mdi:battery-lock
 
 input_number:
