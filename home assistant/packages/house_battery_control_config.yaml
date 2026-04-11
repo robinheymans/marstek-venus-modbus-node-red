@@ -245,3 +245,6 @@ input_boolean:
   house_battery_strategy_charge_allow_discharging:
     name: Allow discharging
     icon: mdi:battery-arrow-down
+  house_battery_strategy_peakshaving_allow_discharging_when_ev_charges:
+    name: Allow Discharging when EV Charges
+    icon: mdi:battery-arrow-down
