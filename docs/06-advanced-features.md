@@ -26,9 +26,17 @@ nav_order: 6
 - **Battery charge order:** determines which battery gets charged first (Multi-battery only)
    - Batteries gets charged in order. By changing which battery is first in order, you can optimize battery wear.
    - Especially during cloudy periods when the first battery takes the grunt of the charging and discharging.
-   - The **Auto Cycle** feature changes the order of the batteries automatically each night or each week
-      - Auto Cycling occurs at 02:00 hrs daily, or 02:00 hrs Sunday morning.
-      - Don't want auto cycling? Select Cycle priority "Never". 
+   - The **Cycle** setting controls how battery priority changes over time:
+
+     | Option | Behaviour |
+     |---|---|
+     | **Auto balance** | Rotates priority every 30 minutes throughout the day. Spreads energy reserve more evenly across all batteries, maximizing combined charge and discharge power delivery. Best for multi-battery setups where keeping batteries at similar SoC matters. |
+     | **Daily** | Rotates once per day at 02:00. |
+     | **Weekly** | Rotates once per week on Sunday at 02:00. |
+     | **Never** | Keeps the manually set priority. No automatic cycling. |
+
+   - **Auto balance** automatically disables the _reverse discharge priority_ optimization, since that feature is designed for batteries at different SoC levels and conflicts with balanced operation.
+   - **Tip:** For single-battery setups, cycling has no effect — any setting works.
 - **Controller Output Protection:** Software protection based on battery maximum charge/discharge values
   - Adjusts control output to stay within configured battery capabilities
 
@@ -46,8 +54,8 @@ nav_order: 6
   - Note: the SET MODE action nodes have proven unreliable, for _safety reasons_ the `On Change` RBE has been left out.
 
 ## Multi-Battery Management
-- **More than 4 batteries:** Override or change `input_number.house_battery_count` and you are good to go.
-  - The dashboard supports 4 batteries out of the box, duplicate and edit these or create your own dashboard.
+- **More than 6 batteries:** Override or change `input_number.house_battery_count` and you are good to go.
+  - The dashboard supports 6 batteries out of the box. For 7 or more, duplicate and edit these cards or create your own dashboard.
 - **3-Phase self-consumption:** if you require 0 W grid consumption on a per phase basis, the setup changes slightly. 
       
       Note: most homes get billed for the net total of all phases. If that is the case for you as well, ignore these instructions.
