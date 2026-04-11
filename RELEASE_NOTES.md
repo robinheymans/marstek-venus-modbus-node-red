@@ -1,6 +1,118 @@
 # Release Notes
 All releases follow Semantic Versioning (SemVer). Every release provides a fresh `home assistant/dashboard.yaml` to import.
 
+## 4.6.2
+- **Fix: UTF-8 encoding in release scripts corrupting emoji icons**
+  * A script used in development was breaking emoji characters (⚪ℹ️🔧⚠️❌).
+  * Restored corrupted emoji icons in `all-flows-in-one-file.json`.
+
+- **Fix: Align chargingLimiter with battery specifications**
+  * The software charging limiter was more aggressive than the battery's own BMS limiter present in newer firmware versions, causing unnecessarily slow charging near full SoC.
+  * New thresholds: 1500W at 95% SoC, 1000W at 99% SoC (was: 1500W at 85%, 500W at 95%, 300W at 98%).
+  * Thanks goes out to _Gely_ and others for noting this.
+
+- **Fix: Lower minimum SoC cutoff from 12% to 11%**
+  * Updated discharging cutoff capacity minimum for all batteries (M1–M4) from 12% to 11%.
+  * This should increase your usable energy by 1%. 
+  * Thanks goes out to _Fonske_ et. al. for pointing this out.
+  * `Note 1` requires manually setting SoC to 11% for each existing battery.
+  * `Note 2` Please let us know your results. 11% should work for Marstek Venus E v1/v2/v3. And is expected to work on other models. 
+  * See [Discord discussion](https://discord.com/channels/1422227123925680228/1422227124391252080/1486096929841483858) for more background. 
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+  - `node-red/02 strategy-self-consumption.json`
+  - `node-red/02 strategy-sell.json`
+  - `node-red/02 strategy-charge.json`
+
+## 4.6.1
+- **Fix: Solar forecast sensor not updating when forecast value changed**
+  * The template trigger used to watch the solar forecast entity was unreliable — it only fires on false→true transitions, not on every value change. Replaced with a `time_pattern` trigger (every 15 min).
+  * Changed the default solar forecast fallback to `sensor.solcast_pv_forecast_forecast_remaining_today` for better intraday accuracy (remaining forecast vs. full day).
+  * Removed `initial` values from solar forecast `input_text` entities to prevent user settings being overwritten on every HA restart.
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+
+## 4.6.0
+- **Feature: Solar forecast aware charging (Solcast)**
+  * Batteries automatically leave room to store solar surplus on sunny days, and charge more from the grid on cloudy days.
+  * Minimize PV export while ensuring there is always plenty of energy in your battery.
+  * Find it under `Charge/Sell tab` > `Charge until solar forecast`
+
+  * It's pre-configured with the recommended [Solcast PV Forecast](https://github.com/BJReplay/ha-solcast-solar) integration (`sensor.solcast_pv_forecast_forecast_today`)
+  * Works with _any other solar forecast_ integration you provide! Just provide a daily kWh forecast sensor. 
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+  - `node-red/01 start-flow.json`
+  - `node-red/02 strategy-charge.json`
+
+## 4.5.2
+- **Fix: Negative, None and 0 cents energy price handling in Dynamic strategy**
+  * Fix by *yavasura* for None values
+  * Fix negative price compatibility
+
+- **Files Changed:**
+  - `home assistant/packages/house_battery_control.yaml`
+  - `node-red/02 strategy-dynamic.json`
+
+## 4.5.1
+- **Tweak: AC power displayed on dashboard**
+  * At the main dashboard, the batteries now show the AC power instead of DC power.
+  * AC is simpler and more logical for users to understand. e.g. Charging at 800W now displays 800W instead of 723W (the net internal battery power)
+  * Note: the sign has flipped. Positive is now battery consumption, negative is battery charging.
+
+- **Fix: Nordpool (core) dynamic price loading (fixes #91)**
+  * Split combined "Tibber, Nordpool (core)" option into separate "Tibber (core)" and "Nordpool (core)" entries
+  * Resolves price data not loading correctly for Nordpool (core) users
+  * Added setup instructions for Nordpool (core) using the Cheapest Energy Hours blueprint
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+  - `node-red/02 strategy-dynamic.json`
+
+## 4.5.0
+- **Feature: Peak Shaving & grid limits**
+  * When Peak Shaving you utilize your batteries (when able) to reduce import/export peaks on your grid connections
+  * Ideal for 'capacity tariff' contracts (aka CAPTAR, capaciteitstarief)
+  * Or to reduce risk of blowing fuses when using multiple heavy appliances (EV, heat-pumps) under changing PV conditions
+  * Note: all strategies seamlessly allow peak shaving to take control. Excl. Full Stop, which takes precedence.
+  * Note: configurable grid power limits for both import and export thresholds
+  * Note: captar usually only requires _import_ limiting
+  * Disclaimer: peak shaving is not a safeguard or replacement for peak protection, overload protection or fuses.
+
+- **Improvements: Power limit configuration**
+  * Refactored power limit settings from strategy-specific to global configuration
+  * Charge and Sell strategies now use centralized grid power limits
+  * The limits can now be found on the settings tab
+  * Onboarding now contains a step to review battery and grid limits 
+
+- **Fix: Removed deprecated Zonneplan workaround**
+  * Removed "Zonneplan (one)" data source option - no longer needed after sensor naming was fixed
+
+- **Fix: Missing icons**
+  * Added missing icons to various UI elements
+
+- **Discussion points**
+  * Charge / Sell perform power limiting, but do not peak shave until they reach their charge/sell goal. 
+    * E.g. Charge does not discharge to help peak shave unless it's desired SoC/reserve has been reached.
+  * A lack of available capacity or charge to perform the peak shaving is not communicated to the user.
+    * E.g. if your batteries are empty, they cannot perform an import peak shave. This can be inferred, but is not explicitly visible. 
+
+- **Files Changed:**
+  - `home assistant/dashboard.yaml`
+  - `home assistant/packages/house_battery_control.yaml`
+  - `node-red/01 start-flow.json`
+  - `node-red/02 strategy-charge.json`
+  - `node-red/02 strategy-dynamic.json`
+  - `node-red/02 strategy-self-consumption.json`
+  - `node-red/02 strategy-sell.json`
+
 ## 4.4.2
 - **Fix: Zonneplan integration sensor name change (fixes #76)**
   * Added support for renamed Zonneplan sensor via new datasource option 'Zonneplan (one)'
